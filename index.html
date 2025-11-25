@@ -7,6 +7,7 @@
     <meta name="theme-color" content="#2563eb">
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
+    <link rel="icon" type="image/png" href="./icons/icon-192.png">
     
     <title>Método Zero Chute | Comparação de Investimentos</title>
     
@@ -17,26 +18,28 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
         .investment-card { transition: all 0.2s ease-in-out; border: 1px solid #e2e8f0; }
-        .whatsapp-float { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: center; }
-        .whatsapp-button { background-color: #25d366; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4); transition: background-color 0.3s; }
-        .whatsapp-button:hover { background-color: #1ebe58; }
         
-        /* Animação de Carregamento */
-        .loader {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid #ffffff;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: none;
+        /* Estilos específicos para os botões sociais do rodapé */
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s, opacity 0.2s;
+            color: white;
+            text-decoration: none;
+            gap: 8px;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .social-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-whatsapp { background-color: #25D366; }
+        .btn-youtube { background-color: #FF0000; }
     </style>
 </head>
-<body class="min-h-screen pb-20">
+<body class="min-h-screen flex flex-col">
 
-    <div id="app" class="max-w-4xl mx-auto bg-white shadow-xl min-h-screen p-4 md:p-8">
+    <div id="app" class="max-w-4xl mx-auto bg-white shadow-xl w-full p-4 md:p-8 flex-grow">
         
         <header class="text-center mb-8 border-b pb-4">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">MÉTODO ZERO CHUTE</h1>
@@ -46,28 +49,6 @@
         <main class="space-y-8">
             <h3 class="text-xl font-semibold text-gray-700 text-center">COMPARAÇÃO DE INVESTIMENTOS</h3>
             
-            <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 mb-6 text-center">
-                <p class="text-gray-700 font-medium mb-4">Escolha uma opção:</p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 items-center">
-                    
-                    <button id="btnGenerateAI" class="relative bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition transform hover:-translate-y-1 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span id="aiIcon">🤖</span>
-                        <div id="aiLoader" class="loader"></div>
-                        <span id="aiButtonText">Gerar Cenário</span>
-                    </button>
-
-                    <span class="text-gray-400 font-bold text-sm">OU</span>
-
-                    <button id="btnClearManual" class="bg-white hover:bg-gray-50 text-gray-600 font-semibold py-3 px-6 rounded-lg border border-gray-300 transition shadow-sm flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                        </svg>
-                        Inserir Manualmente
-                    </button>
-                </div>
-                <p id="aiStatus" class="text-sm text-indigo-600 mt-3 font-semibold min-h-[24px]"></p>
-            </div>
-
             <div id="simulationArea">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
@@ -76,23 +57,25 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700">Capital Inicial (P) R$:</label>
-                                <input type="number" id="principalInputA" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                                <input type="number" id="principalInputA" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" placeholder="Ex: 1000">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700">Taxa (i) %:</label>
                                 <div class="mt-1 flex gap-2">
-                                    <input type="number" id="rateInputA" step="0.0001" class="block w-2/3 rounded-md border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
-                                    <select id="rateUnitA" class="block w-1/3 rounded-md border border-gray-300 shadow-sm p-3 bg-gray-50" disabled>
+                                    <input type="number" id="rateInputA" step="0.0001" class="block w-2/3 rounded-md border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" placeholder="Ex: 1.0">
+                                    <select id="rateUnitA" class="block w-1/3 rounded-md border border-gray-300 shadow-sm p-3 bg-gray-50 text-gray-700 focus:outline-none cursor-pointer hover:bg-gray-100">
                                         <option value="month">Mês</option>
+                                        <option value="year">Ano</option>
                                     </select>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700">Tempo (t):</label>
                                 <div class="mt-1 flex gap-2">
-                                    <input type="number" id="timeInputA" class="block w-2/3 rounded-md border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
-                                    <select id="timeUnitA" class="block w-1/3 rounded-md border border-gray-300 shadow-sm p-3 bg-gray-50" disabled>
+                                    <input type="number" id="timeInputA" class="block w-2/3 rounded-md border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" placeholder="Ex: 12">
+                                    <select id="timeUnitA" class="block w-1/3 rounded-md border border-gray-300 shadow-sm p-3 bg-gray-50 text-gray-700 focus:outline-none cursor-pointer hover:bg-gray-100">
                                         <option value="month">Meses</option>
+                                        <option value="year">Anos</option>
                                     </select>
                                 </div>
                             </div>
@@ -104,23 +87,25 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700">Capital Inicial (P) R$:</label>
-                                <input type="number" id="principalInputB" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-3 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+                                <input type="number" id="principalInputB" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-3 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none" placeholder="Ex: 1000">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700">Taxa (i) %:</label>
                                 <div class="mt-1 flex gap-2">
-                                    <input type="number" id="rateInputB" step="0.0001" class="block w-2/3 rounded-md border border-gray-300 shadow-sm p-3 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
-                                    <select id="rateUnitB" class="block w-1/3 rounded-md border border-gray-300 shadow-sm p-3 bg-gray-50" disabled>
+                                    <input type="number" id="rateInputB" step="0.0001" class="block w-2/3 rounded-md border border-gray-300 shadow-sm p-3 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none" placeholder="Ex: 1.5">
+                                    <select id="rateUnitB" class="block w-1/3 rounded-md border border-gray-300 shadow-sm p-3 bg-gray-50 text-gray-700 focus:outline-none cursor-pointer hover:bg-gray-100">
                                         <option value="month">Mês</option>
+                                        <option value="year">Ano</option>
                                     </select>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700">Tempo (t):</label>
                                 <div class="mt-1 flex gap-2">
-                                    <input type="number" id="timeInputB" class="block w-2/3 rounded-md border border-gray-300 shadow-sm p-3 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
-                                    <select id="timeUnitB" class="block w-1/3 rounded-md border border-gray-300 shadow-sm p-3 bg-gray-50" disabled>
+                                    <input type="number" id="timeInputB" class="block w-2/3 rounded-md border border-gray-300 shadow-sm p-3 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none" placeholder="Ex: 12">
+                                    <select id="timeUnitB" class="block w-1/3 rounded-md border border-gray-300 shadow-sm p-3 bg-gray-50 text-gray-700 focus:outline-none cursor-pointer hover:bg-gray-100">
                                         <option value="month">Meses</option>
+                                        <option value="year">Anos</option>
                                     </select>
                                 </div>
                             </div>
@@ -130,7 +115,7 @@
             </div>
 
             <button id="simulateButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg w-full py-4 rounded-lg shadow-lg transition transform hover:scale-[1.01] uppercase tracking-wide mt-4">
-                Calcular Resultado
+                CALCULAR RESULTADO
             </button>
 
             <div id="resultsArea" class="mt-8 p-6 bg-gray-100 rounded-lg border-l-8 border-gray-400 hidden">
@@ -141,16 +126,16 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-md shadow-lg mb-6">
-                    <h5 class="text-lg font-bold text-gray-700 mb-2">Visualização do Crescimento ao Longo do Tempo</h5>
+                    <h5 class="text-lg font-bold text-gray-700 mb-2">Evolução do Patrimônio</h5>
                     <canvas id="investmentChart"></canvas>
                 </div>
 
-                <div id="comparisonExplanation" class="bg-white p-4 rounded-md shadow-inner border-t-4 border-indigo-300 mb-6 text-base">
+                <div id="comparisonExplanation" class="bg-white p-5 rounded-md shadow-inner border-t-4 border-indigo-300 mb-6 text-base leading-relaxed text-gray-700">
                 </div>
                 
                 <div class="flex flex-col sm:flex-row gap-3 mb-6">
                     <button id="copyButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-3 rounded-lg shadow transition flex items-center justify-center gap-2">
-                        COPIAR RESULTADO RESUMO
+                        COPIAR RESUMO
                     </button>
                     <button id="downloadButton" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-3 rounded-lg shadow transition flex items-center justify-center gap-2">
                         BAIXAR ANÁLISE (.TXT)
@@ -177,155 +162,116 @@
         </main>
     </div>
 
-    <div class="whatsapp-float">
-        <a href="https://wa.me/5534991908166" target="_blank" class="whatsapp-button w-16 h-16 rounded-full flex items-center justify-center text-white text-3xl mb-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.925c0 1.399.366 2.76.957 3.966L.043 16l4.205-1.382a7.927 7.927 0 0 0 3.793.999h.001c4.366 0 7.923-3.558 7.922-7.926-.001-2.45-1.04-4.708-2.83-6.38a7.725 7.725 0 0 0-5.794-2.12zm-4.79 3.58a.59.59 0 0 1 .32.06c.15.066.388.196.592.383.211.205.342.484.426.657.087.173.396.262.613.084.218.174.457.174.475 0 .017-.1.085-.205.215-.105.13-.23.272-.34.397-.1.125-.23.238-.363.342-.134.103-.26.216-.39.34a.573.573 0 0 1-.365.176c-.052 0-.11-.005-.17-.017s-.125-.044-.19-.08c-.066-.037-.145-.09-.232-.162-.089-.074-.187-.175-.296-.29-.11-.115-.224-.265-.333-.423s-.217-.35-.308-.528c-.09-.177-.167-.376-.234-.6s-.11-.47-.11-.748c0-.3.125-.563.224-.658.1-.096.225-.16.376-.23s.28-.15.44-.22c.16-.067.33-.12.51-.174s.344-.08.52-.08zM14.4 7.925c0 3.197-2.61 5.808-5.808 5.808-1.577 0-3.076-.636-4.181-1.751L2.923 13.92l.858-2.731c-1.161-1.222-1.802-2.822-1.802-4.593 0-3.198 2.61-5.808 5.808-5.808s5.808 2.61 5.808 5.808z"/></svg>
-        </a>
-    </div>
+    <footer class="bg-gray-800 text-white py-10 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h4 class="text-lg font-bold mb-6 text-gray-300">FALE CONOSCO E APRENDA MAIS</h4>
+            
+            <div class="flex flex-col md:flex-row justify-center gap-4 mb-8">
+                <a href="https://wa.me/5534991908166" target="_blank" rel="noopener noreferrer" class="social-btn btn-whatsapp">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.925c0 1.399.366 2.76.957 3.966L.043 16l4.205-1.382a7.927 7.927 0 0 0 3.793.999h.001c4.366 0 7.923-3.558 7.922-7.926-.001-2.45-1.04-4.708-2.83-6.38a7.725 7.725 0 0 0-5.794-2.12zm-4.79 3.58a.59.59 0 0 1 .32.06c.15.066.388.196.592.383.211.205.342.484.426.657.087.173.396.262.613.084.218.174.457.174.475 0 .017-.1.085-.205.215-.105.13-.23.272-.34.397-.1.125-.23.238-.363.342-.134.103-.26.216-.39.34a.573.573 0 0 1-.365.176c-.052 0-.11-.005-.17-.017s-.125-.044-.19-.08c-.066-.037-.145-.09-.232-.162-.089-.074-.187-.175-.296-.29-.11-.115-.224-.265-.333-.423s-.217-.35-.308-.528c-.09-.177-.167-.376-.234-.6s-.11-.47-.11-.748c0-.3.125-.563.224-.658.1-.096.225-.16.376-.23s.28-.15.44-.22c.16-.067.33-.12.51-.174s.344-.08.52-.08zM14.4 7.925c0 3.197-2.61 5.808-5.808 5.808-1.577 0-3.076-.636-4.181-1.751L2.923 13.92l.858-2.731c-1.161-1.222-1.802-2.822-1.802-4.593 0-3.198 2.61-5.808 5.808-5.808s5.808 2.61 5.808 5.808z"/>
+                    </svg>
+                    Contato WhatsApp
+                </a>
+
+                <a href="https://www.youtube.com/@ProfessorAndr%C3%A9Locatelli" target="_blank" rel="noopener noreferrer" class="social-btn btn-youtube">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z"/>
+                    </svg>
+                    Canal do YouTube
+                </a>
+            </div>
+
+            <div class="border-t border-gray-700 pt-6 mt-6">
+                <p class="text-sm font-semibold text-gray-400 uppercase tracking-wider">CRIADO POR ANDRÉ AUGUSTO LOCATELLI</p>
+                <p class="text-xs text-gray-600 mt-2">&copy; 2025 Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // CONFIGURAÇÃO API
-        const GEMINI_API_KEY = "AIzaSyB_SRq8smqoxpZsLtfguQmfDGPaOBx-Agk"; 
-        
         const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
         let investmentChart = null; 
 
-        // --- LÓGICA DE REGISTRO PWA ---
+        // --- REGISTRO PWA (Obrigatório para instalação) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
-                    .then(reg => console.log('Service Worker registrado:', reg.scope))
-                    .catch(err => console.log('Falha no Service Worker:', err));
+                    .then(reg => console.log('Service Worker OK:', reg.scope))
+                    .catch(err => console.log('Erro Service Worker:', err));
             });
         }
 
-        // --- CÁLCULOS ---
-        function calculateMontante(P, i, t) {
-            const factor = 1 + (i / 100);
-            return P * Math.pow(factor, t);
+        // --- CÁLCULOS MATEMÁTICOS FLEXÍVEIS ---
+
+        // 1. Converte qualquer taxa para Taxa Mensal (Decimal)
+        function getMonthlyRateDecimal(rate, unit) {
+            if (unit === 'month') {
+                return rate / 100;
+            } else { // year
+                return Math.pow(1 + (rate / 100), 1/12) - 1;
+            }
         }
 
-        function calculateGrowthData(P, i, t) {
-            const factor = 1 + (i / 100);
+        // 2. Converte qualquer tempo para Meses
+        function getTimeInMonths(time, unit) {
+            if (unit === 'month') {
+                return time;
+            } else { // year
+                return time * 12;
+            }
+        }
+
+        // 3. Calcula o crescimento
+        function calculateGrowthData(P, i_val, i_unit, t_val, t_unit) {
+            const i_monthly = getMonthlyRateDecimal(i_val, i_unit);
+            const t_months = getTimeInMonths(t_val, t_unit);
+            
             let currentBalance = P;
             const data = [{ step: 0, balance: P }];
             const labels = ['0M'];
-            for (let step = 1; step <= t; step++) {
-                currentBalance *= factor;
+
+            for (let step = 1; step <= t_months; step++) {
+                currentBalance *= (1 + i_monthly);
                 data.push({ step: step, balance: currentBalance });
-                labels.push(step + 'M');
+                if (t_months > 24 && step % 6 !== 0) { labels.push(''); } else { labels.push(step + 'M'); }
             }
-            return { balances: data.map(d => d.balance), labels: labels, totalSteps: t, finalBalance: currentBalance };
-        }
-
-        // --- GERAÇÃO IA E FALLBACK ---
-        function generateRandomScenario() {
-            const rand = (min, max) => (Math.random() * (max - min) + min);
-            const randInt = (min, max) => Math.floor(rand(min, max));
-            const invA = { principal: randInt(500, 15000), rate: parseFloat(rand(0.6, 1.5).toFixed(4)), rateUnit: 'month', time: randInt(12, 60), timeUnit: 'month' };
-            const invB = { principal: randInt(500, 15000), rate: parseFloat(rand(1.0, 1.8).toFixed(4)), rateUnit: 'month', time: randInt(12, 60), timeUnit: 'month' };
-            return { invA, invB };
-        }
-        
-        async function generateScenarioWithAI() {
-            let textResponse; 
-            let scenario;
-
-            if (!GEMINI_API_KEY || GEMINI_API_KEY.length < 20) {
-                 scenario = generateRandomScenario();
-                 fillInputs(scenario);
-                 document.getElementById('aiStatus').textContent = "⚠️ ERRO: Chave API ausente. Gerando cenário ALEATÓRIO.";
-                 document.getElementById('aiStatus').className = "text-sm text-orange-600 mt-3 font-bold";
-                 return;
-            }
-
-            const btn = document.getElementById('btnGenerateAI');
-            const loader = document.getElementById('aiLoader');
-            const icon = document.getElementById('aiIcon');
-            const status = document.getElementById('aiStatus');
-            const btnText = document.getElementById('aiButtonText');
-
-            btn.disabled = true;
-            loader.style.display = 'block';
-            icon.style.display = 'none';
-            btnText.textContent = "IA Pensando...";
-            status.textContent = "Conectando ao Google Gemini...";
-            status.className = "text-sm text-indigo-600 mt-3 font-semibold animate-pulse";
-
-            const prompt = `Aja como um professor especialista em matemática financeira. Crie 2 opções de investimentos (A e B). Valores numéricos puros. Use valores realistas do Brasil. Taxas AO MÊS. Tempo em MESES. Retorne JSON puro: { "invA": { "principal": 1000, "rate": 1.2, "rateUnit": "month", "time": 12, "timeUnit": "month" }, "invB": { "principal": 1500, "rate": 1.45, "rateUnit": "month", "time": 18, "timeUnit": "month" } }`;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-
-                if (!response.ok) { throw new Error('Erro na API'); }
-
-                const data = await response.json();
-                textResponse = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-                const jsonStartIndex = textResponse.indexOf('{');
-                const jsonEndIndex = textResponse.lastIndexOf('}') + 1;
-                
-                if(jsonStartIndex !== -1 && jsonEndIndex !== -1) {
-                    textResponse = textResponse.substring(jsonStartIndex, jsonEndIndex);
-                    scenario = JSON.parse(textResponse);
-                    fillInputs(scenario);
-                    status.textContent = "✅ Cenário gerado com sucesso pela IA! Clique em Calcular.";
-                    status.className = "text-sm text-green-600 mt-3 font-bold";
-                } else { throw new Error('JSON inválido'); }
-
-            } catch (error) {
-                console.error("Erro:", error);
-                scenario = generateRandomScenario();
-                fillInputs(scenario);
-                status.textContent = `⚠️ ERRO na IA. Gerando cenário ALEATÓRIO OFFLINE.`;
-                status.className = "text-sm text-orange-600 mt-3 font-bold";
-            } finally {
-                btn.disabled = false;
-                loader.style.display = 'none';
-                icon.style.display = 'inline';
-                btnText.textContent = "Gerar Cenário";
-                document.getElementById('resultsArea').classList.add('hidden');
-            }
-        }
-        
-        function fillInputs(scenario) {
-            // Converte se a IA errar e mandar anual
-            if (scenario.invA.rateUnit === 'year') { scenario.invA.rate = ((Math.pow(1 + scenario.invA.rate / 100, 1/12) - 1) * 100); }
-            if (scenario.invA.timeUnit === 'year') { scenario.invA.time *= 12; }
-            if (scenario.invB.rateUnit === 'year') { scenario.invB.rate = ((Math.pow(1 + scenario.invB.rate / 100, 1/12) - 1) * 100); }
-            if (scenario.invB.timeUnit === 'year') { scenario.invB.time *= 12; }
             
-            document.getElementById('principalInputA').value = scenario.invA.principal;
-            document.getElementById('rateInputA').value = scenario.invA.rate.toFixed(4);
-            document.getElementById('timeInputA').value = Math.round(scenario.invA.time); 
-            document.getElementById('principalInputB').value = scenario.invB.principal;
-            document.getElementById('rateInputB').value = scenario.invB.rate.toFixed(4);
-            document.getElementById('timeInputB').value = Math.round(scenario.invB.time); 
+            return { balances: data.map(d => d.balance), labels: labels, totalSteps: t_months, finalBalance: currentBalance };
         }
 
-        // --- RESULTADOS E GRÁFICO ---
-        function generateResultText(forCopy = false) {
+        // --- GESTÃO DE TEXTOS E EXPORTAÇÃO ---
+        function generateResultText() {
             const PA = parseFloat(document.getElementById('principalInputA').value);
             const iA = parseFloat(document.getElementById('rateInputA').value);
             const tA = parseFloat(document.getElementById('timeInputA').value);
+            const uRateA = document.getElementById('rateUnitA').value;
+            const uTimeA = document.getElementById('timeUnitA').value;
+
             const PB = parseFloat(document.getElementById('principalInputB').value);
             const iB = parseFloat(document.getElementById('rateInputB').value);
             const tB = parseFloat(document.getElementById('timeInputB').value);
+            const uRateB = document.getElementById('rateUnitB').value;
+            const uTimeB = document.getElementById('timeUnitB').value;
             
-            const finalA = calculateMontante(PA, iA, tA);
-            const finalB = calculateMontante(PB, iB, tB);
+            const growthA = calculateGrowthData(PA, iA, uRateA, tA, uTimeA);
+            const growthB = calculateGrowthData(PB, iB, uRateB, tB, uTimeB);
             
             const winnerMsg = document.getElementById('winnerMessage').textContent;
-            const explanation = document.getElementById('comparisonExplanation').textContent;
+            
+            // Remove tags HTML para o arquivo de texto
+            const explanationHTML = document.getElementById('comparisonExplanation').innerText;
 
-            return `MÉTODO ZERO CHUTE\n\nRESULTADO:\n${winnerMsg}\n${explanation}\n\nINV A: P=${formatCurrency(PA)}, i=${iA}%, t=${tA}m -> FINAL: ${formatCurrency(finalA)}\nINV B: P=${formatCurrency(PB)}, i=${iB}%, t=${tB}m -> FINAL: ${formatCurrency(finalB)}`;
+            const txtRateA = uRateA === 'month' ? 'a.m.' : 'a.a.';
+            const txtTimeA = uTimeA === 'month' ? 'meses' : 'anos';
+            const txtRateB = uRateB === 'month' ? 'a.m.' : 'a.a.';
+            const txtTimeB = uTimeB === 'month' ? 'meses' : 'anos';
+
+            return `MÉTODO ZERO CHUTE - RELATÓRIO\n\nRESULTADO:\n${winnerMsg}\n\nANÁLISE:\n${explanationHTML}\n\n--- INVESTIMENTO A ---\nCapital: ${formatCurrency(PA)}\nTaxa: ${iA}% ${txtRateA}\nTempo: ${tA} ${txtTimeA}\nFINAL: ${formatCurrency(growthA.finalBalance)}\n\n--- INVESTIMENTO B ---\nCapital: ${formatCurrency(PB)}\nTaxa: ${iB}% ${txtRateB}\nTempo: ${tB} ${txtTimeB}\nFINAL: ${formatCurrency(growthB.finalBalance)}`;
         }
 
         async function copyResults() {
-            try { await navigator.clipboard.writeText(generateResultText(true)); alert('Copiado!'); } 
+            try { await navigator.clipboard.writeText(generateResultText()); alert('Relatório copiado!'); } 
             catch (err) { alert('Erro ao copiar.'); }
         }
 
@@ -339,58 +285,88 @@
             document.body.removeChild(element);
         }
 
+        // --- EXECUÇÃO PRINCIPAL ---
         function runSimulation() {
             const getVal = (id) => parseFloat(document.getElementById(id).value);
+            const getUnit = (id) => document.getElementById(id).value;
+
             const PA = getVal('principalInputA'), iA = getVal('rateInputA'), tA = getVal('timeInputA');
+            const uRateA = getUnit('rateUnitA'), uTimeA = getUnit('timeUnitA');
+
             const PB = getVal('principalInputB'), iB = getVal('rateInputB'), tB = getVal('timeInputB');
+            const uRateB = getUnit('rateUnitB'), uTimeB = getUnit('timeUnitB');
 
-            if ([PA, iA, tA, PB, iB, tB].some(v => isNaN(v) || v <= 0)) { alert("Preencha valores válidos."); return; }
+            if ([PA, iA, tA, PB, iB, tB].some(v => isNaN(v) || v <= 0)) { alert("Por favor, preencha todos os campos com valores válidos."); return; }
 
-            const growthA = calculateGrowthData(PA, iA, tA);
-            const growthB = calculateGrowthData(PB, iB, tB);
+            const growthA = calculateGrowthData(PA, iA, uRateA, tA, uTimeA);
+            const growthB = calculateGrowthData(PB, iB, uRateB, tB, uTimeB);
+            
             const finalA = growthA.finalBalance;
             const finalB = growthB.finalBalance;
-            const diff = finalA - finalB;
+            const diff = Math.abs(finalA - finalB);
             
             const resArea = document.getElementById('resultsArea');
             resArea.classList.remove('hidden', 'border-blue-500', 'border-red-500', 'border-gray-400');
             document.getElementById('resultA').className = "p-4 rounded border bg-white";
             document.getElementById('resultB').className = "p-4 rounded border bg-white";
 
-            let winner, loser, wFinal, lFinal;
+            let winner, loser, winnerName, profitWinner, profitLoser;
 
-            if (Math.abs(diff) < 0.01) {
+            // Lógica do Vencedor e Coleta de Dados para Explicação
+            if (diff < 0.01) {
                 document.getElementById('winnerMessage').textContent = "⚖️ Empate técnico!";
                 document.getElementById('winnerMessage').className = "text-lg font-bold text-gray-700";
                 resArea.classList.add('border-gray-400');
-                winner = 'Ambos';
+                winnerName = 'Ambos';
             } else if (finalA > finalB) {
                 document.getElementById('winnerMessage').textContent = "🏆 Investimento A venceu!";
                 document.getElementById('winnerMessage').className = "text-lg font-bold text-blue-700";
                 resArea.classList.add('border-blue-500');
                 document.getElementById('resultA').classList.add('border-blue-500', 'bg-blue-50');
-                winner = 'Investimento A'; loser = 'Investimento B'; wFinal = finalA; lFinal = finalB;
+                winnerName = 'Investimento A';
+                profitWinner = finalA - PA;
+                profitLoser = finalB - PB;
             } else {
                 document.getElementById('winnerMessage').textContent = "🏆 Investimento B venceu!";
                 document.getElementById('winnerMessage').className = "text-lg font-bold text-red-700";
                 resArea.classList.add('border-red-500');
                 document.getElementById('resultB').classList.add('border-red-500', 'bg-red-50');
-                winner = 'Investimento B'; loser = 'Investimento A'; wFinal = finalB; lFinal = finalA;
+                winnerName = 'Investimento B';
+                profitWinner = finalB - PB;
+                profitLoser = finalA - PA;
             }
 
             document.getElementById('valueA').textContent = formatCurrency(finalA);
             document.getElementById('valueB').textContent = formatCurrency(finalB);
             
-            document.getElementById('detailedAnalysis').innerHTML = `<h6 class="font-bold border-b pb-1">Juros:</h6><p>A: <strong class="text-green-600">${formatCurrency(finalA - PA)}</strong></p><p>B: <strong class="text-green-600">${formatCurrency(finalB - PB)}</strong></p>`;
+            // Detalhes simples
+            document.getElementById('detailedAnalysis').innerHTML = `<h6 class="font-bold border-b pb-1">Lucro Líquido (Juros Ganhos):</h6><p>Investimento A: <strong class="text-green-600">${formatCurrency(finalA - PA)}</strong></p><p>Investimento B: <strong class="text-green-600">${formatCurrency(finalB - PB)}</strong></p>`;
 
-            if (winner !== 'Ambos') {
-                document.getElementById('comparisonExplanation').innerHTML = `<h6 class="font-bold mb-2">Conclusão</h6><p>O <strong>${winner}</strong> superou o ${loser} em <strong>${formatCurrency(Math.abs(diff))}</strong>.</p>`;
+            // NOVA LÓGICA DE EXPLICAÇÃO DETALHADA
+            let explanationHTML = '';
+            if (winnerName === 'Ambos') {
+                explanationHTML = `<p class="text-gray-700">Matematicamente, ambas as opções resultam no mesmo valor final ao término do período.</p>`;
             } else {
-                document.getElementById('comparisonExplanation').innerHTML = `<p>Resultados idênticos.</p>`;
+                explanationHTML = `
+                    <div class="space-y-3 text-sm md:text-base text-gray-700">
+                        <p>Ao final do período, o <strong class="${winnerName === 'Investimento A' ? 'text-blue-700' : 'text-red-700'}">${winnerName}</strong> gerou um lucro líquido total de <strong>${formatCurrency(profitWinner)}</strong>.</p>
+                        
+                        <p>Em comparação, a outra opção gerou apenas <strong>${formatCurrency(profitLoser)}</strong> de lucro.</p>
+                        
+                        <div class="bg-indigo-50 p-4 rounded border-l-4 border-indigo-500 mt-2">
+                            <p class="font-bold text-indigo-900 mb-1">💡 Conclusão Financeira (Dinheiro no Bolso):</p>
+                            <p>Escolhendo o ${winnerName}, você teria <strong>${formatCurrency(diff)} a mais</strong> do que se escolhesse a outra opção.</p>
+                        </div>
+                    </div>
+                `;
             }
+            document.getElementById('comparisonExplanation').innerHTML = explanationHTML;
 
+            // Gráfico
             if (investmentChart) { investmentChart.destroy(); }
             const chartLabels = growthA.totalSteps > growthB.totalSteps ? growthA.labels : growthB.labels;
+            const dataA_padded = [...growthA.balances];
+            while (dataA_padded.length < chartLabels.length) { dataA_padded.push(growthA.finalBalance); }
             const dataB_padded = [...growthB.balances];
             while (dataB_padded.length < chartLabels.length) { dataB_padded.push(growthB.finalBalance); }
 
@@ -400,7 +376,7 @@
                 data: {
                     labels: chartLabels,
                     datasets: [
-                        { label: 'Investimento A', data: growthA.balances, borderColor: 'rgb(59, 130, 246)', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 },
+                        { label: 'Investimento A', data: dataA_padded, borderColor: 'rgb(59, 130, 246)', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 },
                         { label: 'Investimento B', data: dataB_padded, borderColor: 'rgb(239, 68, 68)', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
                     ]
                 },
@@ -410,17 +386,18 @@
             resArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        document.getElementById('btnGenerateAI').addEventListener('click', generateScenarioWithAI);
+        function clearAll() {
+            document.querySelectorAll('input').forEach(i => i.value = '');
+            document.querySelectorAll('select').forEach(s => s.value = 'month');
+            document.getElementById('resultsArea').classList.add('hidden');
+            if (investmentChart) investmentChart.destroy();
+        }
+
+        // --- LISTENERS ---
         document.getElementById('simulateButton').addEventListener('click', runSimulation);
         document.getElementById('copyButton').addEventListener('click', copyResults);
         document.getElementById('downloadButton').addEventListener('click', downloadResults);
-        document.getElementById('btnClearManual').addEventListener('click', () => {
-            document.querySelectorAll('input').forEach(i => i.value = '');
-            document.getElementById('resultsArea').classList.add('hidden');
-            document.getElementById('aiStatus').textContent = ""; 
-            if (investmentChart) investmentChart.destroy(); 
-        });
-        document.getElementById('resetButton').addEventListener('click', () => { document.getElementById('btnClearManual').click(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        document.getElementById('resetButton').addEventListener('click', () => { clearAll(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
     </script>
 </body>
 </html>
